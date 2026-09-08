@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
+<meta name="description" content="WeNDI — Welcome to Nigeria Development Initiative. Championing Nigeria's Promise. Empowering Her People.">
+<title>WeNDI — Welcome to Nigeria Development Initiative</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=DM+Sans:opsz,wght@9..40,400..700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<style>
+:root{
+  --forest:#0a3d2e; --forest-deep:#062418; --emerald:#1a6b4f; --emerald-bright:#2d9968;
+  --cream:#faf7f2; --off-white:#f5f1ea; --ink:#0d1b14; --charcoal:#1a1a1a;
+  --gold:#c9a961; --gold-bright:#e0c478; --gold-deep:#a88638;
+}
+*{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;box-sizing:border-box;}
+html{scroll-behavior:smooth;background:var(--cream);}
+body{
+  font-family:'DM Sans',sans-serif; background:var(--cream);
+  color:var(--ink); overflow-x:hidden; line-height:1.5; margin:0;
+}
+.font-display{
+  font-family:'Fraunces',serif; font-optical-sizing:auto;
+  letter-spacing:-0.02em; line-height:1.05;
+}
+.font-display em{font-style:italic; font-weight:400; color:var(--gold);}
+
+/* Loader */
+.loader{
+  position:fixed; inset:0; z-index:9999;
+  background:linear-gradient(135deg,var(--forest-deep) 0%,var(--forest) 50%,var(--emerald) 100%);
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+}
+.loader::before{
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(circle at 50% 50%, rgba(201,169,97,0.12) 0%, transparent 55%);
+}
+.loader-content{position:relative; display:flex; flex-direction:column; align-items:center; gap:1.75rem; z-index:2;}
+.loader-logo{width:84px; height:84px; filter:drop-shadow(0 0 22px rgba(201,169,97,0.45)); animation:logoRotate 3s cubic-bezier(0.65,0,0.35,1) infinite;}
+@keyframes logoRotate{to{transform:rotate(360deg);}}
+.loader-text{text-align:center; color:var(--cream); display:flex; flex-direction:column; gap:0.25rem;}
+.loader-progress{width:240px; display:flex; flex-direction:column; gap:0.5rem;}
+.loader-progress-bar{width:100%; height:1px; background:rgba(255,255,255,0.15); position:relative; overflow:hidden;}
+.loader-progress-bar::after{
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(90deg, transparent, var(--gold), var(--gold-bright));
+  width:var(--progress,0%); transition:width 0.1s linear;
+  box-shadow:0 0 14px var(--gold);
+}
+.loader-progress-text{display:flex; justify-content:space-between; font-size:0.7rem; color:rgba(245,241,234,0.6); letter-spacing:0.18em; text-transform:uppercase;}
+.curtain{position:absolute; left:0; right:0; height:50%; background:var(--forest-deep); z-index:3;}
+.curtain-top{top:0;} .curtain-bottom{bottom:0;}
+
+/* Noise */
+.noise-overlay{
+  position:fixed; inset:0; pointer-events:none; opacity:0.035; z-index:90; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Header */
+.header{position:fixed; top:0; left:0; right:0; z-index:80; padding:1.5rem 0; transition:all 0.4s cubic-bezier(0.4,0,0.2,1);}
+.header.scrolled{
+  background:rgba(250,247,242,0.88); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  padding:0.9rem 0; box-shadow:0 1px 0 rgba(10,61,46,0.08), 0 10px 30px rgba(10,61,46,0.04);
+}
+.header-inner{max-width:1440px; margin:0 auto; padding:0 2.5rem; display:flex; align-items:center; justify-content:space-between; gap:1.5rem;}
+.logo{display:flex; align-items:center; gap:0.6rem; color:var(--forest); text-decoration:none; font-weight:600;}
+.logo svg{width:38px; height:38px;}
+.logo-text{font-family:'Fraunces',serif; font-size:1.4rem; font-weight:600; letter-spacing:-0.02em;}
+.nav-desktop{display:flex; align-items:center; gap:0.15rem;}
+.nav-link{
+  position:relative; padding:0.55rem 0.85rem; font-size:0.85rem; font-weight:500;
+  color:var(--ink); text-decoration:none; border-radius:100px; transition:color 0.3s ease; white-space:nowrap;
+}
+.nav-link::after{content:''; position:absolute; bottom:0.3rem; left:50%; width:0; height:1px; background:var(--gold); transition:width 0.3s ease, left 0.3s ease;}
+.nav-link:hover{color:var(--forest);}
+.nav-link:hover::after{width:calc(100% - 1.7rem); left:0.85rem;}
+.header-cta{padding:0.7rem 1.4rem; font-size:0.85rem;}
+.menu-toggle{display:none; width:44px; height:44px; border:none; background:transparent; cursor:pointer; flex-direction:column; align-items:center; justify-content:center; gap:5px;}
+.menu-toggle span{width:22px; height:1.5px; background:var(--forest); transition:all 0.3s ease;}
+
+/* Mobile menu */
+.mobile-menu{
+  position:fixed; inset:0; z-index:200; background:linear-gradient(160deg,var(--forest) 0%,var(--forest-deep) 100%);
+  color:var(--cream); transform:translateX(100%); transition:transform 0.6s cubic-bezier(0.7,0,0.2,1);
+  display:flex; flex-direction:column; padding:1.75rem 1.5rem 2rem; overflow-y:auto;
+}
+.mobile-menu.open{transform:translateX(0);}
+.mobile-menu-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:3rem;}
+.mobile-menu-close{
+  width:44px; height:44px; border:1px solid rgba(245,241,234,0.2); background:transparent;
+  color:var(--cream); border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center;
+}
+.mobile-nav{display:flex; flex-direction:column; gap:0.25rem; flex:1;}
+.mobile-nav a{
+  font-family:'Fraunces',serif; font-size:2.1rem; color:var(--cream); text-decoration:none;
+  padding:0.5rem 0; border-bottom:1px solid rgba(245,241,234,0.08);
+  opacity:0; transform:translateY(20px); transition:opacity 0.5s ease, transform 0.5s ease, color 0.3s ease;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.mobile-menu.open .mobile-nav a{opacity:1; transform:translateY(0);}
+.mobile-nav a:hover{color:var(--gold);}
+.mobile-nav a span{font-family:'DM Sans',sans-serif; font-size:0.75rem; color:var(--gold); opacity:0.6;}
+.mobile-menu-footer{margin-top:2rem; display:flex; flex-direction:column; gap:1rem;}
+
+/* Buttons */
+.btn-primary,.btn-secondary,.btn-ghost,.btn-gold{
+  display:inline-flex; align-items:center; gap:0.55rem; padding:0.95rem 1.65rem;
+  border-radius:100px; font-weight:500; font-size:0.9rem; text-decoration:none; cursor:pointer;
+  transition:all 0.3s cubic-bezier(0.4,0,0.2,1); border:none; font-family:inherit;
+}
+.btn-primary{background:var(--forest); color:var(--cream);}
+.btn-primary:hover{background:var(--emerald); transform:translateY(-2px); box-shadow:0 12px 32px rgba(10,61,46,0.25);}
+.btn-secondary{background:transparent; color:var(--forest); border:1px solid var(--forest);}
+.btn-secondary:hover{background:var(--forest); color:var(--cream);}
+.btn-ghost{background:transparent; color:var(--cream); border:1px solid rgba(245,241,234,0.3);}
+.btn-ghost:hover{background:var(--cream); color:var(--forest); border-color:var(--cream);}
+.btn-gold{background:var(--gold); color:var(--forest-deep);}
+.btn-gold:hover{background:var(--gold-bright); transform:translateY(-2px); box-shadow:0 12px 32px rgba(201,169,97,0.35);}
+
+/* Hero */
+.hero{position:relative; min-height:100vh; display:flex; align-items:center; overflow:hidden; color:var(--cream);}
+.hero-bg{position:absolute; inset:0; z-index:-1;}
+.hero-bg img{width:100%; height:120%; object-fit:cover; filter:brightness(0.55) contrast(1.05);}
+.hero-bg::after{
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(6,36,24,0.4) 0%, rgba(6,36,24,0.2) 50%, rgba(6,36,24,0.65) 100%),
+    linear-gradient(135deg, rgba(6,36,24,0.85) 0%, rgba(10,61,46,0.55) 40%, rgba(10,61,46,0.15) 80%, transparent 100%);
+}
+.hero-content{max-width:1440px; margin:0 auto; padding:0 2.5rem; width:100%; position:relative; z-index:1;}
+.hero-eyebrow{
+  display:inline-flex; align-items:center; gap:0.6rem; padding:0.5rem 1rem;
+  background:rgba(245,241,234,0.08); backdrop-filter:blur(10px);
+  border:1px solid rgba(245,241,234,0.15); border-radius:100px;
+  font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:2rem;
+}
+.hero-eyebrow::before{content:''; width:6px; height:6px; background:var(--gold); border-radius:50%; box-shadow:0 0 10px var(--gold);}
+.hero-title{font-size:clamp(2.4rem,6.5vw,5.5rem); font-weight:400; max-width:18ch; margin:0 0 2rem;}
+.hero-title .line{display:block;}
+.hero-title .word{display:inline-block;}
+.hero-subtitle{font-size:clamp(0.98rem,1.2vw,1.15rem); max-width:54ch; line-height:1.65; margin-bottom:2.5rem; color:rgba(245,241,234,0.85);}
+.hero-cta{display:flex; gap:1rem; flex-wrap:wrap;}
+.hero-scroll{position:absolute; bottom:2rem; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:0.75rem; color:rgba(245,241,234,0.55); font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase;}
+.hero-scroll-line{width:1px; height:40px; background:linear-gradient(to bottom, transparent, var(--cream)); animation:scrollLine 2s ease-in-out infinite;}
+@keyframes scrollLine{0%,100%{transform:scaleY(0.3); transform-origin:top;} 50%{transform:scaleY(1); transform-origin:top;}}
+
+/* Sections */
+.section{padding:7.5rem 0; position:relative;}
+.section-eyebrow{display:inline-flex; align-items:center; gap:0.6rem; font-size:0.72rem; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold-deep); margin-bottom:1.25rem;}
+.section-eyebrow::before{content:''; width:24px; height:1px; background:var(--gold);}
+.section-title{font-size:clamp(2rem,4.5vw,3.75rem); font-weight:400; max-width:22ch; margin:0 0 1.5rem;}
+.section-description{font-size:clamp(0.98rem,1.15vw,1.1rem); max-width:62ch; line-height:1.65; color:var(--ink); opacity:0.75;}
+.section-dark{background:var(--forest); color:var(--cream);}
+.section-dark .section-eyebrow{color:var(--gold);}
+.section-dark .section-description{color:rgba(245,241,234,0.75);}
+.section-deep{background:var(--forest-deep); color:var(--cream);}
+.section-deep .section-eyebrow{color:var(--gold);}
+.section-deep .section-description{color:rgba(245,241,234,0.75);}
+
+/* Intro */
+.intro-content{max-width:1440px; margin:0 auto; padding:0 2.5rem;}
+.intro-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:1.5rem; margin-top:4rem;}
+.pillar-card{
+  position:relative; padding:2.25rem; background:white; border-radius:24px;
+  border:1px solid rgba(10,61,46,0.08); transition:all 0.4s cubic-bezier(0.4,0,0.2,1); overflow:hidden;
+}
+.pillar-card::before{
+  content:''; position:absolute; top:0; left:0; width:100%; height:3px;
+  background:linear-gradient(90deg, var(--gold), var(--emerald-bright));
+  transform:scaleX(0); transform-origin:left; transition:transform 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+.pillar-card:hover{transform:translateY(-4px); box-shadow:0 24px 60px rgba(10,61,46,0.1);}
+.pillar-card:hover::before{transform:scaleX(1);}
+.pillar-card.dark{background:var(--forest); color:var(--cream); border:none;}
+.pillar-card.dark .pillar-title{color:var(--cream);}
+.pillar-card.dark .pillar-description{color:rgba(245,241,234,0.75);}
+.pillar-card.dark .pillar-icon{background:rgba(201,169,97,0.15); color:var(--gold);}
+.pillar-card.dark .pillar-number{color:var(--gold);}
+.pillar-number{font-family:'Fraunces',serif; font-size:0.78rem; color:var(--gold); letter-spacing:0.15em; margin-bottom:1.5rem;}
+.pillar-icon{width:56px; height:56px; border-radius:14px; background:linear-gradient(135deg, var(--forest), var(--emerald)); color:var(--cream); display:flex; align-items:center; justify-content:center; margin-bottom:1.5rem;}
+.pillar-icon svg{width:24px; height:24px;}
+.pillar-title{font-family:'Fraunces',serif; font-size:1.45rem; font-weight:500; margin:0 0 0.7rem; color:var(--forest);}
+.pillar-title-big{font-family:'Fraunces',serif; font-size:1.75rem; font-weight:500; line-height:1.2; margin:0 0 0.7rem; color:var(--cream);}
+.pillar-description{color:var(--ink); opacity:0.72; line-height:1.65; margin:0;}
+
+/* Sectors */
+.section-sectors{background:var(--cream); padding:7.5rem 0 4rem; overflow:hidden;}
+.sectors-header{max-width:1440px; margin:0 auto 3rem; padding:0 2.5rem; display:flex; justify-content:space-between; align-items:end; gap:2rem; flex-wrap:wrap;}
+.sectors-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:1.25rem; max-width:1440px; margin:0 auto; padding:0 2.5rem;}
+.sector-card{position:relative; aspect-ratio:3/4; border-radius:20px; overflow:hidden; cursor:pointer; background:var(--forest);}
+.sector-card img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform 0.6s cubic-bezier(0.4,0,0.2,1); filter:brightness(0.5) saturate(1.1);}
+.sector-card:hover img{transform:scale(1.1); filter:brightness(0.4) saturate(1.1);}
+.sector-card::after{content:''; position:absolute; inset:0; background:linear-gradient(to top, rgba(6,36,24,0.85), rgba(6,36,24,0.1) 50%, transparent);}
+.sector-card-content{position:absolute; inset:0; padding:1.5rem; display:flex; flex-direction:column; justify-content:space-between; color:var(--cream); z-index:1;}
+.sector-card-top{display:flex; justify-content:space-between; align-items:start;}
+.sector-card-number{font-family:'Fraunces',serif; font-size:0.85rem; color:var(--gold);}
+.sector-card-icon{width:42px; height:42px; border-radius:10px; background:rgba(245,241,234,0.12); backdrop-filter:blur(10px); border:1px solid rgba(245,241,234,0.18); display:flex; align-items:center; justify-content:center; transform:translateY(-6px); opacity:0; transition:all 0.4s ease;}
+.sector-card:hover .sector-card-icon{transform:translateY(0); opacity:1;}
+.sector-card-title{font-family:'Fraunces',serif; font-size:1.2rem; font-weight:500; line-height:1.2;}
+.sector-card-description{font-size:0.82rem; opacity:0; max-height:0; transition:all 0.4s ease; line-height:1.55;}
+.sector-card:hover .sector-card-description{opacity:0.85; max-height:80px; margin-top:0.5rem;}
+
+/* Approach */
+.section-approach{background:var(--forest); color:var(--cream); padding:7.5rem 0; position:relative; overflow:hidden;}
+.section-approach::before{content:''; position:absolute; top:-20%; right:-10%; width:50%; height:80%; background:radial-gradient(circle, rgba(201,169,97,0.08), transparent 60%); pointer-events:none;}
+.approach-content{max-width:1440px; margin:0 auto; padding:0 2.5rem; position:relative;}
+.approach-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:1px; background:rgba(245,241,234,0.08); border:1px solid rgba(245,241,234,0.1); margin-top:3.5rem; border-radius:20px; overflow:hidden;}
+.approach-step{background:var(--forest); padding:1.75rem 1.25rem; display:flex; flex-direction:column; gap:0.85rem; position:relative; transition:background 0.3s ease; min-height:220px;}
+.approach-step:hover{background:var(--emerald);}
+.approach-step-number{font-family:'Fraunces',serif; font-size:1.6rem; color:var(--gold); font-weight:300; line-height:1;}
+.approach-step-icon{color:var(--gold);}
+.approach-step-icon svg{width:24px; height:24px;}
+.approach-step-title{font-family:'Fraunces',serif; font-size:0.95rem; font-weight:500; line-height:1.3;}
+.approach-alignment{margin-top:2.5rem; display:flex; gap:1rem; flex-wrap:wrap; align-items:center;}
+.alignment-badge{display:inline-flex; align-items:center; gap:0.75rem; padding:0.7rem 1.25rem; background:rgba(245,241,234,0.05); border:1px solid rgba(245,241,234,0.15); border-radius:100px; font-size:0.82rem; color:var(--cream);}
+.alignment-badge-icon{width:28px; height:28px; border-radius:50%; background:var(--gold); color:var(--forest-deep); display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:700; font-family:'Fraunces',serif;}
+
+/* Global */
+.section-global{background:var(--forest-deep); color:var(--cream); padding:7.5rem 0; position:relative; overflow:hidden;}
+.global-content{max-width:1440px; margin:0 auto; padding:0 2.5rem; display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center;}
+.global-stats{display:flex; gap:2.5rem; flex-wrap:wrap; margin-top:2.5rem;}
+.global-stat-number{font-family:'Fraunces',serif; font-size:2.4rem; color:var(--gold); line-height:1; font-weight:400;}
+.global-stat-label{font-size:0.8rem; opacity:0.6; margin-top:0.3rem;}
+.global-visual{position:relative; aspect-ratio:1; width:100%; max-width:560px; margin:0 auto;}
+.global-svg{width:100%; height:100%;}
+.connection-line{stroke-dasharray:1000; stroke-dashoffset:1000;}
+
+/* Impact */
+.section-impact{background:var(--cream); padding:7.5rem 0;}
+.impact-content{max-width:1440px; margin:0 auto; padding:0 2.5rem;}
+.impact-stats{display:grid; grid-template-columns:repeat(4,1fr); margin:3.5rem 0 0; border-top:1px solid rgba(10,61,46,0.12); border-bottom:1px solid rgba(10,61,46,0.12);}
+.impact-stat{padding:2.5rem 1.75rem; border-right:1px solid rgba(10,61,46,0.12); position:relative;}
+.impact-stat:last-child{border-right:none;}
+.impact-stat-number{font-family:'Fraunces',serif; font-size:clamp(2.5rem,4.5vw,3.75rem); font-weight:400; line-height:1; color:var(--forest); margin-bottom:0.6rem;}
+.impact-stat-suffix{color:var(--gold);}
+.impact-stat-label{font-size:0.78rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink); opacity:0.65;}
+.impact-placeholder-note{margin-top:1.25rem; font-size:0.78rem; color:var(--ink); opacity:0.5; font-style:italic;}
+.news-header{display:flex; justify-content:space-between; align-items:end; flex-wrap:wrap; gap:2rem; margin:5rem 0 2rem;}
+.news-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem;}
+.news-card{background:white; border-radius:20px; overflow:hidden; border:1px solid rgba(10,61,46,0.08); transition:all 0.3s ease; cursor:pointer;}
+.news-card:hover{transform:translateY(-4px); box-shadow:0 24px 60px rgba(10,61,46,0.1);}
+.news-card-image{aspect-ratio:16/10; overflow:hidden; position:relative;}
+.news-card-image img{width:100%; height:100%; object-fit:cover; transition:transform 0.6s cubic-bezier(0.4,0,0.2,1);}
+.news-card:hover .news-card-image img{transform:scale(1.08);}
+.news-card-content{padding:1.5rem;}
+.news-card-meta{display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase;}
+.news-card-category{color:var(--gold-deep); font-weight:600;}
+.news-card-date{color:var(--ink); opacity:0.5;}
+.news-card-title{font-family:'Fraunces',serif; font-size:1.15rem; font-weight:500; line-height:1.3; margin:0 0 0.7rem; color:var(--forest);}
+.news-card-excerpt{font-size:0.88rem; color:var(--ink); opacity:0.7; line-height:1.6; margin:0 0 1rem;}
+.news-card-link{display:inline-flex; align-items:center; gap:0.4rem; font-size:0.82rem; font-weight:600; color:var(--forest); text-decoration:none; transition:gap 0.3s ease;}
+.news-card:hover .news-card-link{gap:0.65rem;}
+
+/* Get Involved */
+.section-involved{background:var(--cream); padding:7.5rem 0;}
+.involved-header{max-width:1440px; margin:0 auto; padding:0 2.5rem;}
+.involved-grid{max-width:1440px; margin:3.5rem auto 0; padding:0 2.5rem; display:grid; grid-template-columns:repeat(4,1fr); gap:1.25rem;}
+.involved-card{
+  background:white; border-radius:20px; padding:1.75rem;
+  border:1px solid rgba(10,61,46,0.08); transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+  position:relative; overflow:hidden; display:flex; flex-direction:column; gap:0.85rem;
+  min-height:240px; cursor:pointer; text-decoration:none;
+}
+.involved-card::before{
+  content:''; position:absolute; bottom:0; left:0; width:100%; height:4px;
+  background:linear-gradient(90deg, var(--gold), var(--emerald-bright));
+  transform:scaleX(0); transform-origin:left; transition:transform 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+.involved-card:hover{transform:translateY(-6px); box-shadow:0 24px 60px rgba(10,61,46,0.1);}
+.involved-card:hover::before{transform:scaleX(1);}
+.involved-card.cta{background:var(--forest); color:var(--cream); justify-content:space-between;}
+.involved-card.cta .involved-card-title{color:var(--cream);}
+.involved-card.cta .involved-card-description{color:rgba(245,241,234,0.75);}
+.involved-card.cta .involved-card-icon{background:rgba(201,169,97,0.15); color:var(--gold);}
+.involved-card.cta::before{background:linear-gradient(90deg, var(--gold), var(--gold-bright));}
+.involved-card-icon{width:46px; height:46px; border-radius:12px; background:rgba(10,61,46,0.08); color:var(--forest); display:flex; align-items:center; justify-content:center;}
+.involved-card-icon svg{width:22px; height:22px;}
+.involved-card-title{font-family:'Fraunces',serif; font-size:1.15rem; font-weight:500; color:var(--forest);}
+.involved-card-description{font-size:0.85rem; color:var(--ink); opacity:0.72; line-height:1.55; flex:1;}
+.involved-card-cta{display:inline-flex; align-items:center; gap:0.4rem; font-size:0.8rem; font-weight:600; color:var(--forest);}
+.involved-card.cta .involved-card-cta{color:var(--gold);}
+
+/* Contact group */
+.section-contact-group{background:var(--forest); color:var(--cream); padding:7.5rem 0; position:relative; overflow:hidden;}
+.section-contact-group::before{content:''; position:absolute; top:-30%; right:-10%; width:60%; height:160%; background:radial-gradient(circle, rgba(201,169,97,0.1), transparent 50%); pointer-events:none;}
+.contact-group-content{max-width:1440px; margin:0 auto; padding:0 2.5rem; position:relative; z-index:1;}
+.contact-group-grid{display:grid; grid-template-columns:1.1fr 1fr; gap:4rem; margin-top:3.5rem; align-items:start;}
+.contact-group-features{display:flex; gap:1.5rem; flex-wrap:wrap; margin-top:2rem;}
+.contact-group-feature{display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; color:rgba(245,241,234,0.85);}
+.contact-group-feature::before{content:''; width:6px; height:6px; background:var(--gold); border-radius:50%;}
+.contact-group-buttons{display:flex; flex-direction:column; gap:1rem;}
+.contact-group-button{display:flex; align-items:center; justify-content:space-between; padding:1.5rem 1.75rem; background:rgba(245,241,234,0.05); border:1px solid rgba(245,241,234,0.1); border-radius:16px; color:var(--cream); text-decoration:none; transition:all 0.3s ease; cursor:pointer;}
+.contact-group-button:hover{background:rgba(245,241,234,0.1); border-color:var(--gold); transform:translateX(4px);}
+.contact-group-button-title{font-family:'Fraunces',serif; font-size:1.15rem; font-weight:500;}
+.contact-group-button-sub{font-size:0.82rem; opacity:0.7; margin-top:0.25rem;}
+.contact-group-button-arrow{width:40px; height:40px; border-radius:50%; background:var(--gold); color:var(--forest-deep); display:flex; align-items:center; justify-content:center; transition:transform 0.3s ease; flex-shrink:0;}
+.contact-group-button:hover .contact-group-button-arrow{transform:rotate(-45deg);}
+
+/* Closing */
+.section-closing{background:var(--forest-deep); color:var(--cream); padding:8rem 0; position:relative; overflow:hidden; text-align:center;}
+.section-closing::before{content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 50% 50%, rgba(201,169,97,0.14), transparent 60%); pointer-events:none;}
+.section-closing::after{content:''; position:absolute; inset:0; background-image:url('https://picsum.photos/seed/wendi-nigeria-closing/1920/1080.jpg'); background-size:cover; background-position:center; opacity:0.08; mix-blend-mode:luminosity;}
+.closing-content{max-width:1100px; margin:0 auto; padding:0 2.5rem; position:relative; z-index:1;}
+.closing-title{font-family:'Fraunces',serif; font-size:clamp(2rem,4.5vw,4rem); font-weight:400; line-height:1.1; margin:1.5rem 0;}
+.closing-buttons{display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin-top:2.5rem;}
+
+/* Footer */
+.footer{background:var(--ink); color:rgba(245,241,234,0.7); padding:5rem 0 2rem;}
+.footer-content{max-width:1440px; margin:0 auto; padding:0 2.5rem;}
+.footer-top{display:grid; grid-template-columns:2fr 1fr 1fr 1.3fr; gap:3.5rem; padding-bottom:3rem; border-bottom:1px solid rgba(245,241,234,0.08);}
+.footer-brand-description{font-size:0.92rem; line-height:1.65; margin-top:1.25rem; max-width:36ch;}
+.footer-newsletter{margin-top:1.75rem; display:flex; gap:0.5rem; max-width:400px;}
+.footer-newsletter input{flex:1; padding:0.7rem 1rem; background:rgba(245,241,234,0.05); border:1px solid rgba(245,241,234,0.15); border-radius:100px; color:var(--cream); font-family:inherit; font-size:0.85rem;}
+.footer-newsletter input:focus{outline:none; border-color:var(--gold);}
+.footer-newsletter input::placeholder{color:rgba(245,241,234,0.4);}
+.footer-newsletter button{background:var(--gold); color:var(--forest-deep); border:none; border-radius:100px; padding:0.7rem 1.25rem; font-weight:600; cursor:pointer; font-family:inherit; font-size:0.82rem; transition:background 0.3s ease;}
+.footer-newsletter button:hover{background:var(--gold-bright);}
+.footer-col h4{font-family:'Fraunces',serif; color:var(--cream); font-size:0.95rem; font-weight:500; margin:0 0 1.25rem; letter-spacing:0.05em;}
+.footer-col ul{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.7rem;}
+.footer-col ul a{color:rgba(245,241,234,0.6); text-decoration:none; font-size:0.88rem; transition:color 0.3s ease;}
+.footer-col ul a:hover{color:var(--gold);}
+.footer-contact{display:flex; flex-direction:column; gap:1rem;}
+.footer-contact-item{display:flex; gap:0.75rem; font-size:0.85rem; color:rgba(245,241,234,0.65); line-height:1.55;}
+.footer-contact-item svg{flex-shrink:0; color:var(--gold); margin-top:3px; width:16px; height:16px;}
+.footer-contact-item a{color:inherit; text-decoration:none;}
+.footer-contact-item a:hover{color:var(--gold);}
+.footer-social{display:flex; gap:0.5rem; margin-top:1.5rem;}
+.footer-social a{width:36px; height:36px; border-radius:50%; background:rgba(245,241,234,0.05); display:flex; align-items:center; justify-content:center; color:rgba(245,241,234,0.75); transition:all 0.3s ease;}
+.footer-social a:hover{background:var(--gold); color:var(--forest-deep); transform:translateY(-2px);}
+.footer-bottom{padding-top:2rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; font-size:0.78rem; color:rgba(245,241,234,0.5);}
+.footer-bottom-links{display:flex; gap:1.5rem;}
+.footer-bottom-links a{color:inherit; text-decoration:none;}
+.footer-bottom-links a:hover{color:var(--gold);}
+
+/* Toast */
+.toast{
+  position:fixed; bottom:2rem; right:2rem; z-index:300;
+  background:var(--forest); color:var(--cream); padding:1rem 1.25rem;
+  border-radius:14px; box-shadow:0 24px 60px rgba(10,61,46,0.3);
+  display:flex; align-items:center; gap:0.75rem;
+  transform:translateY(20px); opacity:0; transition:all 0.35s ease;
+  font-size:0.88rem; max-width:380px; border:1px solid rgba(201,169,97,0.2);
+}
+.toast.show{transform:translateY(0); opacity:1;}
+.toast svg{color:var(--gold); flex-shrink:0;}
+
+/* Reveal */
+.reveal{opacity:0; transform:translateY(40px);}
+
+/* Focus */
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--gold); outline-offset:3px; border-radius:4px;}
+
+/* Responsive */
+@media (max-width:1024px){
+  .nav-desktop{display:none;} .header-cta{display:none;} .menu-toggle{display:flex;}
+  .intro-grid{grid-template-columns:1fr;}
+  .sectors-grid{grid-template-columns:repeat(2,1fr);}
+  .approach-grid{grid-template-columns:repeat(2,1fr);}
+  .global-content{grid-template-columns:1fr; gap:3rem;}
+  .impact-stats{grid-template-columns:repeat(2,1fr);}
+  .impact-stat:nth-child(2){border-right:none;}
+  .impact-stat:nth-child(1),.impact-stat:nth-child(2){border-bottom:1px solid rgba(10,61,46,0.12);}
+  .news-grid{grid-template-columns:1fr;}
+  .involved-grid{grid-template-columns:repeat(2,1fr);}
+  .contact-group-grid{grid-template-columns:1fr;}
+  .footer-top{grid-template-columns:1fr 1fr; gap:2.5rem;}
+}
+@media (max-width:640px){
+  .header-inner{padding:0 1.25rem;}
+  .section{padding:5rem 0;}
+  .section-sectors{padding:5rem 0 2rem;}
+  .intro-content,.sectors-header,.sectors-grid,.approach-content,.impact-content,.involved-header,.involved-grid,.contact-group-content,.closing-content,.footer-content,.hero-content,.global-content{padding-left:1.25rem; padding-right:1.25rem;}
+  .hero{min-height:90vh;}
+  .hero-title{font-size:clamp(2.2rem,11vw,3.5rem);}
+  .sectors-grid{grid-template-columns:1fr;}
+  .approach-grid{grid-template-columns:1fr;}
+  .impact-stats{grid-template-columns:1fr;}
+  .impact-stat{border-right:none; border-bottom:1px solid rgba(10,61,46,0.12);}
+  .impact-stat:last-child{border-bottom:none;}
+  .involved-grid{grid-template-columns:1fr;}
+  .footer-top{grid-template-columns:1fr;}
+  .footer-bottom{flex-direction:column; align-items:flex-start;}
+  .mobile-nav a{font-size:1.85rem;}
+  .closing-buttons{flex-direction:column; align-items:center;}
+  .closing-buttons a{width:100%; max-width:320px; justify-content:center;}
+  .toast{left:1rem; right:1rem; bottom:1rem; max-width:none;}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;}
+  .loader-logo{animation:none;}
+  .reveal{opacity:1; transform:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- Loader -->
+<div id="loader" class="loader">
+  <div class="loader-content">
+    <div class="loader-logo">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="60" cy="60" r="56" fill="none" stroke="#c9a961" stroke-width="0.5" opacity="0.4"/>
+        <circle cx="60" cy="60" r="50" fill="none" stroke="#c9a961" stroke-width="1.5"/>
+        <path d="M 40 80 L 40 40 L 78 80 L 78 40" stroke="#faf7f2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <circle cx="60" cy="28" r="3" fill="#c9a961"/>
+      </svg>
+    </div>
+    <div class="loader-text">
+      <span class="font-display" style="font-size:1.4rem; letter-spacing:0.05em;">WeNDI</span>
+      <span style="font-size:0.68rem; letter-spacing:0.2em; text-transform:uppercase; opacity:0.6;">Development Initiative</span>
+    </div>
+    <div class="loader-progress">
+      <div class="loader-progress-bar" id="loaderBar"></div>
+      <div class="loader-progress-text">
+        <span>Loading</span>
+        <span id="loaderText">0%</span>
+      </div>
+    </div>
+  </div>
+  <div class="curtain curtain-top" id="curtainTop"></div>
+  <div class="curtain curtain-bottom" id="curtainBottom"></div>
+</div>
+
+<div class="noise-overlay"></div>
+
+<!-- Header -->
+<header id="header" class="header">
+  <div class="header-inner">
+    <a href="#home" class="logo" aria-label="WeNDI home">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="60" cy="60" r="56" fill="none" stroke="#c9a961" stroke-width="0.5" opacity="0.4"/>
+        <circle cx="60" cy="60" r="50" fill="none" stroke="#c9a961" stroke-width="1.5"/>
+        <path d="M 40 80 L 40 40 L 78 80 L 78 40" stroke="#0a3d2e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <circle cx="60" cy="28" r="3" fill="#c9a961"/>
+      </svg>
+      <span class="logo-text">WeNDI</span>
+    </a>
+    <nav class="nav-desktop" aria-label="Primary">
+      <a href="#home" class="nav-link">Home</a>
+      <a href="whoweare.html" class="nav-link">Who We Are</a>
+      <a href="goals.html" class="nav-link">Our Goals</a>
+      <a href="sip.html" class="nav-link">SIP</a>
+      <a href="ncgg.html" class="nav-link">Contact</a>
+      <a href="#get-involved" class="nav-link">Get Involved</a>
+    </nav>
+    <a href="#partner" class="btn-primary header-cta magnetic">Partner With Us</a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+  <div class="mobile-menu-header">
+    <span class="logo" style="color:var(--cream);">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="60" cy="60" r="56" fill="none" stroke="#c9a961" stroke-width="0.5" opacity="0.4"/>
+        <circle cx="60" cy="60" r="50" fill="none" stroke="#c9a961" stroke-width="1.5"/>
+        <path d="M 40 80 L 40 40 L 78 80 L 78 40" stroke="#faf7f2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <circle cx="60" cy="28" r="3" fill="#c9a961"/>
+      </svg>
+      <span class="logo-text">WeNDI</span>
+    </span>
+    <button class="mobile-menu-close" id="menuClose" aria-label="Close menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+    </button>
+  </div>
+  <nav class="mobile-nav" aria-label="Mobile primary">
+    <a href="#home" data-close>Home <span>01</span></a>
+    <a href="whoweare.html" data-close>Who We Are <span>02</span></a>
+    <a href="goals.html" data-close>Our Goals <span>03</span></a>
+    <a href="sip.html" data-close>Strategic Intervention Programmes <span>04</span></a>
+    <a href="ncgg.html" data-close>National Contact Group for Growth <span>05</span></a>
+    <a href="ncgg.html" data-close>Contact <span>05</span></a>
+    <a href="#get-involved" data-close>Get Involved <span>07</span></a>
+  </nav>
+  <div class="mobile-menu-footer">
+    <a href="#partner" class="btn-gold" id="mobilePartner" style="justify-content:center;">Partner With Us</a>
+    <div style="font-size:0.85rem; color:rgba(245,241,234,0.6);">
+      info@welcometonigeria.org · +234 929 14658<br>
+      Garki 2, Abuja, FCT
+    </div>
+  </div>
+</div>
+
+<main>
+
+<!-- Hero -->
+<section id="home" class="hero">
+  <div class="hero-bg">
+    <img src="https://picsum.photos/seed/wendi-nigeria-people/1920/1280.jpg" alt="Nigerian people, innovation, culture and enterprise" loading="eager">
+  </div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Welcome to Nigeria Development Initiative</div>
+    <h1 class="hero-title font-display">
+      <span class="line"><span class="word">Championing</span> <span class="word">Nigeria's</span> <span class="word"><em>Promise</em>.</span></span>
+      <span class="line"><span class="word">Empowering</span> <span class="word">Her</span> <span class="word"><em>People</em>.</span></span>
+    </h1>
+    <p class="hero-subtitle">
+      WeNDI is a people-centred, pro-country development initiative unlocking Nigeria's potential by connecting culture, commerce, innovation and sustainable development.
+    </p>
+    <div class="hero-cta">
+      <a href="#impact" class="btn-primary magnetic">Explore Our Impact
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a href="#get-involved" class="btn-ghost magnetic">Get Involved</a>
+    </div>
+  </div>
+  <div class="hero-scroll" aria-hidden="true">
+    <span>Scroll</span>
+    <div class="hero-scroll-line"></div>
+  </div>
+</section>
+
+<!-- Introduction -->
+<section id="who-we-are" class="section">
+  <div class="intro-content">
+    <div class="section-eyebrow">Who We Are</div>
+    <h2 class="section-title font-display reveal">More Than a Project. <em>A Movement for National Transformation.</em></h2>
+    <p class="section-description reveal">
+      WeNDI creates lasting multi-sectoral impact, expands social and economic opportunities, develops human capital and promotes Nigeria's values, strengths and global standing. We work across regions, sectors and generations to build the Nigeria we believe in.
+    </p>
+    <div class="intro-grid">
+      <div class="pillar-card reveal">
+        <div class="pillar-number">01 / Pillar</div>
+        <div class="pillar-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3 class="pillar-title">People-Driven</h3>
+        <p class="pillar-description">Empowering communities, promoting inclusion and preserving cultural heritage as the foundation of national progress.</p>
+      </div>
+      <div class="pillar-card reveal">
+        <div class="pillar-number">02 / Pillar</div>
+        <div class="pillar-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <h3 class="pillar-title">Country-Focused</h3>
+        <p class="pillar-description">Aligning every programme with Nigeria's socio-economic development priorities and our national vision.</p>
+      </div>
+      <div class="pillar-card reveal">
+        <div class="pillar-number">03 / Pillar</div>
+        <div class="pillar-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+        </div>
+        <h3 class="pillar-title">Future-Building</h3>
+        <p class="pillar-description">Connecting culture, technology, enterprise and sustainability to create jobs and lasting opportunity.</p>
+      </div>
+      <div class="pillar-card dark reveal">
+        <div class="pillar-number">WeNDI Mandate</div>
+        <div class="pillar-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <h3 class="pillar-title-big">A unified platform for national renewal.</h3>
+        <p class="pillar-description">Working hand-in-hand with government, private sector and citizens to deliver real, measurable, lasting impact.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Sectors -->
+<section id="programmes" class="section-sectors">
+  <div class="sectors-header">
+    <div>
+      <div class="section-eyebrow">Building Nigeria's Future</div>
+      <h2 class="section-title font-display reveal">Eight sectors. <em>One nation.</em> Unlimited possibility.</h2>
+    </div>
+    <p class="section-description reveal" style="max-width:38ch;">
+      We work across interconnected sectors that drive Nigeria's present and shape her future — from tourism and culture to enterprise, industry and innovation.
+    </p>
+  </div>
+  <div class="sectors-grid">
+    <article class="sector-card">
+      <img src="https://picsum.photos/seed/wendi-tourism/600/800.jpg" alt="Nigerian tourism and cultural heritage" loading="lazy">
+      <div class="sector-card-content">
+        <div class="sector-card-top"><div class="sector-card-number">01</div>
+          <div class="sector-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg></div>
+        </div>
+        <div><div class="sector-card-title">Tourism and Culture</div><div class="sector-card-description">Showcasing Nigeria's heritage, destinations and creative energy to the world.</div></div>
+      </div>
+    </article>
+    <article class="sector-card">
+      <img src="https://picsum.photos/seed/wendi-creative/600/800.jpg" alt="Nigerian creative industries" loading="lazy">
+      <div class="sector-card-content">
+        <div class="sector-card-top"><div class="sector-card-number">02</div>
+          <div class="sector-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.504 5.555-5.555C21.965 6.012 17.461 2 12 2z"/></svg></div>
+        </div>
+        <div><div class="sector-card-title">Creative Industries</div><div class="sector-card-description">Film, music, fashion, design — powering Nigeria's cultural economy.</div></div>
+      </div>
+    </article>
+    <article class="sector-card">
+      <img src="https://picsum.photos/seed/wendi-education/600/800.jpg" alt="Education and youth empowerment in Nigeria" loading="lazy">
+      <div class="sector-card-content">
+        <div class="sector-card-top"><div class="sector-card-number">03</div>
+          <div class="sector-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+        </div>
+        <div><div class="sector-card-title">Education and Youth Empowerment</div><div class="sector-card-description">Skills, scholarships and pathways for Nigeria's young majority.</div></div>
+      </div>
+    </article>
+    <article class="sector-card">
+      <img src="https://picsum.photos/seed/wendi-technology/600/800.jpg" alt="Science, technology and innovation in Nigeria" loading="lazy">
+      <div class="sector-card-content">
+        <div class="sector-card-top"><div class="sector-card-number">04</div>
+          <div class="sector-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/></svg></div>
+        </div>
+        <div><div class="sector-card-title">Science, Technology and Innovation</div><div class="sector-card-description">Research, digital infrastructure and homegrown breakthroughs.</div></div>
+      </div>
+    </article>
+    <article class="sector-card">
+      <img src="https://picsum.photos/seed/wendi-agriculture/600/800.jpg" alt="Agriculture and food security in Nigeria" loading="lazy">
+      <div class="sector-card-content">
+        <div class="sector-card-top"><div class="sector-card-number">05</div>
+          <div class="sector-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10M10 20c5.5-2.5.8-6.1 4-10.6M9.5 9.5c-1 1.5-2 3.5-2 5.5M14 9.5c1 1.5 2 3.5 2 5.5M12 20v-9"/></svg></div>
+        </div>
+        <div><div class="sector-card-title">Agriculture and Food Security</div><div class="sector-card-description">From farm to table — strengthening Nigeria's food systems.</div></div>
+      </div>
+    </article>
+    <article class="sector-card">
+      <img src="https://picsum.photos/seed/wendi-enterprise/600/800.jpg" alt="Enterprise and SMEs in Nigeria" loading="lazy">
+      <div class="sector-card-content">
+        <div class="sector-card-top"><div class="sector-card-number">06</div>
+          <div class="sector-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m2 22 1-1h3l9-9"/><path d="M3 21v-5l9-9 5 5-9 9z"/><path d="M12 12h.01"/><path d="M15 6 21 12"/><path d="M18 3 21 6"/></svg></div>
+        </div>
+        <div><div class="sector-card-title">Enterprise and SMEs</div><div class="sector-card-description">Backing Nigerian entrepreneurs with finance, markets and mentorship.</div></div>
+      </div>
+    </article>
+    <article class="sector-card">
+      <img src="https://picsum.photos/seed/wendi-environment/600/800.jpg" alt="Environmental sustainability in Nigeria" loading="lazy">
+      <div class="sector-card-content">
+        <div class="sector-card-top"><div class="sector-card-number">07</div>
+          <div class="sector-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 12 13"/></svg></div>
+        </div>
+        <div><div class="sector-card-title">Environmental Sustainability</div><div class="sector-card-description">Climate resilience, clean energy and a green Nigerian economy.</div></div>
+      </div>
+    </article>
+    <article class="sector-card">
+      <img src="https://picsum.photos/seed/wendi-industry/600/800.jpg" alt="Industry, trade and investment in Nigeria" loading="lazy">
+      <div class="sector-card-content">
+        <div class="sector-card-top"><div class="sector-card-number">08</div>
+          <div class="sector-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3"/><path d="M2 20V8l4 3V8l4 3V5l4 3V2l8 6v12"/></svg></div>
+        </div>
+        <div><div class="sector-card-title">Industry, Trade and Investment</div><div class="sector-card-description">Building Nigerian industry and connecting it to global markets.</div></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- Approach -->
+<section id="our-goals" class="section section-approach">
+  <div class="approach-content">
+    <div class="section-eyebrow">Our Approach</div>
+    <h2 class="section-title font-display reveal" style="color:var(--cream);">A development model built on <em>rigor and partnership.</em></h2>
+    <p class="section-description reveal" style="max-width:60ch;">
+      WeNDI's work follows a structured, transparent and outcome-driven model — built for measurable national impact and aligned with the United Nations Sustainable Development Goals and the African Union Agenda 2063.
+    </p>
+    <div class="approach-grid reveal">
+      <div class="approach-step"><div class="approach-step-number">01</div>
+        <div class="approach-step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 13L2 9z"/><path d="M11 3 7 9l5 13 5-13-4-6"/></svg></div>
+        <div class="approach-step-title">Research and Capacity Building</div>
+      </div>
+      <div class="approach-step"><div class="approach-step-number">02</div>
+        <div class="approach-step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg></div>
+        <div class="approach-step-title">Project Development</div>
+      </div>
+      <div class="approach-step"><div class="approach-step-number">03</div>
+        <div class="approach-step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div class="approach-step-title">Strategic Collaboration</div>
+      </div>
+      <div class="approach-step"><div class="approach-step-number">04</div>
+        <div class="approach-step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42 2L21 9"/><path d="m3 21 3-3"/><path d="M10 13l-1.5 1.5a1 1 0 0 0 3 3"/></svg></div>
+        <div class="approach-step-title">Public-Private Partnerships</div>
+      </div>
+      <div class="approach-step"><div class="approach-step-number">05</div>
+        <div class="approach-step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg></div>
+        <div class="approach-step-title">Programme Implementation</div>
+      </div>
+      <div class="approach-step"><div class="approach-step-number">06</div>
+        <div class="approach-step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div>
+        <div class="approach-step-title">Monitoring and Evaluation</div>
+      </div>
+      <div class="approach-step"><div class="approach-step-number">07</div>
+        <div class="approach-step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></div>
+        <div class="approach-step-title">Advocacy and National Participation</div>
+      </div>
+    </div>
+    <div class="approach-alignment reveal">
+      <div class="alignment-badge"><span class="alignment-badge-icon">UN</span><span>Aligned with the United Nations Sustainable Development Goals</span></div>
+      <div class="alignment-badge"><span class="alignment-badge-icon">AU</span><span>Supporting African Union Agenda 2063</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Global -->
+<section id="global" class="section section-global">
+  <div class="global-content">
+    <div>
+      <div class="section-eyebrow">Global Outlook</div>
+      <h2 class="section-title font-display reveal" style="color:var(--cream);">Locally Grounded. <em>Globally Engaged.</em></h2>
+      <p class="section-description reveal">
+        WeNDI positions Nigeria as a contributor, partner and destination for investment, talent, innovation and cultural exchange. We connect Nigerian excellence to global opportunities — and bring global partnerships home.
+      </p>
+      <div class="global-stats reveal">
+        <div><div class="global-stat-number">06</div><div class="global-stat-label">Continents engaged</div></div>
+        <div><div class="global-stat-number">25<span style="font-size:1.5rem;color:var(--gold);">+</span></div><div class="global-stat-label">Partner countries</div></div>
+        <div><div class="global-stat-number">01</div><div class="global-stat-label">Nigeria, leading</div></div>
+      </div>
+    </div>
+    <div class="global-visual">
+      <svg class="global-svg" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" aria-label="Global network map centered on Nigeria">
+        <defs>
+          <radialGradient id="centerGlow" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#c9a961" stop-opacity="0.55"/>
+            <stop offset="55%" stop-color="#c9a961" stop-opacity="0.08"/>
+            <stop offset="100%" stop-color="#c9a961" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="300" cy="300" r="260" fill="none" stroke="#c9a961" stroke-width="0.5" opacity="0.08"/>
+        <circle cx="300" cy="300" r="200" fill="none" stroke="#c9a961" stroke-width="0.5" opacity="0.1"/>
+        <circle cx="300" cy="300" r="140" fill="none" stroke="#c9a961" stroke-width="0.5" opacity="0.12"/>
+        <circle cx="300" cy="300" r="100" fill="url(#centerGlow)"/>
+        <!-- Connection lines from Nigeria (300,300) to global cities -->
+        <line class="connection-line" x1="300" y1="300" x2="160" y2="120" stroke="#c9a961" stroke-width="1" opacity="0.5"/>
+        <line class="connection-line" x1="300" y1="300" x2="470" y2="150" stroke="#c9a961" stroke-width="1" opacity="0.5"/>
+        <line class="connection-line" x1="300" y1="300" x2="510" y2="320" stroke="#c9a961" stroke-width="1" opacity="0.5"/>
+        <line class="connection-line" x1="300" y1="300" x2="120" y2="280" stroke="#c9a961" stroke-width="1" opacity="0.5"/>
+        <line class="connection-line" x1="300" y1="300" x2="450" y2="500" stroke="#c9a961" stroke-width="1" opacity="0.5"/>
+        <line class="connection-line" x1="300" y1="300" x2="200" y2="500" stroke="#c9a961" stroke-width="1" opacity="0.5"/>
+        <line class="connection-line" x1="300" y1="300" x2="380" y2="80" stroke="#c9a961" stroke-width="1" opacity="0.5"/>
+        <line class="connection-line" x1="300" y1="300" x2="80" y2="420" stroke="#c9a961" stroke-width="1" opacity="0.5"/>
+        <!-- Outer nodes -->
+        <g class="node-dot">
+          <circle cx="160" cy="120" r="6" fill="#c9a961"/>
+          <circle cx="160" cy="120" r="3" fill="#faf7f2"/>
+          <text x="160" y="105" fill="#faf7f2" font-size="10" font-family="DM Sans" text-anchor="middle" opacity="0.8">London</text>
+        </g>
+        <g class="node-dot">
+          <circle cx="470" cy="150" r="6" fill="#c9a961"/>
+          <circle cx="470" cy="150" r="3" fill="#faf7f2"/>
+          <text x="470" y="135" fill="#faf7f2" font-size="10" font-family="DM Sans" text-anchor="middle" opacity="0.8">Dubai</text>
+        </g>
+        <g class="node-dot">
+          <circle cx="510" cy="320" r="6" fill="#c9a961"/>
+          <circle cx="510" cy="320" r="3" fill="#faf7f2"/>
+          <text x="528" y="325" fill="#faf7f2" font-size="10" font-family="DM Sans" opacity="0.8">Beijing</text>
+        </g>
+        <g class="node-dot">
+          <circle cx="120" cy="280" r="6" fill="#c9a961"/>
+          <circle cx="120" cy="280" r="3" fill="#faf7f2"/>
+          <text x="120" y="263" fill="#faf7f2" font-size="10" font-family="DM Sans" text-anchor="middle" opacity="0.8">New York</text>
+        </g>
+        <g class="node-dot">
+          <circle cx="450" cy="500" r="6" fill="#c9a961"/>
+          <circle cx="450" cy="500" r="3" fill="#faf7f2"/>
+          <text x="450" y="520" fill="#faf7f2" font-size="10" font-family="DM Sans" text-anchor="middle" opacity="0.8">Sydney</text>
+        </g>
+        <g class="node-dot">
+          <circle cx="200" cy="500" r="6" fill="#c9a961"/>
+          <circle cx="200" cy="500" r="3" fill="#faf7f2"/>
+          <text x="200" y="520" fill="#faf7f2" font-size="10" font-family="DM Sans" text-anchor="middle" opacity="0.8">Cape Town</text>
+        </g>
+        <g class="node-dot">
+          <circle cx="380" cy="80" r="6" fill="#c9a961"/>
+          <circle cx="380" cy="80" r="3" fill="#faf7f2"/>
+          <text x="380" y="68" fill="#faf7f2" font-size="10" font-family="DM Sans" text-anchor="middle" opacity="0.8">Paris</text>
+        </g>
+        <g class="node-dot">
+          <circle cx="80" cy="420" r="6" fill="#c9a961"/>
+          <circle cx="80" cy="420" r="3" fill="#faf7f2"/>
+          <text x="80" y="440" fill="#faf7f2" font-size="10" font-family="DM Sans" text-anchor="middle" opacity="0.8">São Paulo</text>
+        </g>
+        <!-- Center node Nigeria -->
+        <g>
+          <circle cx="300" cy="300" r="16" fill="#c9a961"/>
+          <circle cx="300" cy="300" r="8" fill="#0a3d2e"/>
+          <text x="300" y="340" fill="#faf7f2" font-size="14" font-family="Fraunces" text-anchor="middle" font-weight="500">Nigeria</text>
+          <text x="300" y="356" fill="#c9a961" font-size="9" font-family="DM Sans" text-anchor="middle" letter-spacing="2">WE NDI HUB</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- Impact -->
+<section id="impact" class="section section-impact">
+  <div class="impact-content">
+    <div class="section-eyebrow">Impact and Activity</div>
+    <h2 class="section-title font-display reveal">Verified progress. <em>Real outcomes.</em></h2>
+    <p class="section-description reveal">Tracking national reach, partnerships and economic opportunities across every WeNDI programme.</p>
+
+    <div class="impact-stats reveal">
+      <div class="impact-stat">
+        <div class="impact-stat-number"><span class="counter" data-target="0">—</span><span class="impact-stat-suffix"></span></div>
+        <div class="impact-stat-label">Completed Programmes</div>
+      </div>
+      <div class="impact-stat">
+        <div class="impact-stat-number"><span class="counter" data-target="0">—</span></div>
+        <div class="impact-stat-label">Communities Reached</div>
+      </div>
+      <div class="impact-stat">
+        <div class="impact-stat-number"><span class="counter" data-target="0">—</span></div>
+        <div class="impact-stat-label">Active Partnerships</div>
+      </div>
+      <div class="impact-stat">
+        <div class="impact-stat-number"><span class="counter" data-target="0">—</span></div>
+        <div class="impact-stat-label">Opportunities Created</div>
+      </div>
+    </div>
+    <p class="impact-placeholder-note">Figures displayed as CMS placeholders pending verified data from programme monitoring &amp; evaluation.</p>
+
+    <div class="news-header">
+      <div>
+        <div class="section-eyebrow" style="margin-top:0;">Featured News &amp; Projects</div>
+        <h3 class="font-display" style="font-size:clamp(1.6rem,3vw,2.25rem); font-weight:400; max-width:22ch; margin:0; color:var(--forest);">Latest from the field.</h3>
+      </div>
+      <a href="#" class="btn-secondary">View All Updates</a>
+    </div>
+
+    <div class="news-grid">
+      <article class="news-card">
+        <div class="news-card-image">
+          <img src="https://picsum.photos/seed/wendi-news-conference/800/500.jpg" alt="WeNDI national development conference" loading="lazy">
+        </div>
+        <div class="news-card-content">
+          <div class="news-card-meta">
+            <span class="news-card-category">Conference</span>
+            <span class="news-card-date">Mar 2024</span>
+          </div>
+          <h4 class="news-card-title">WeNDI Convenes National Development Conference in Abuja</h4>
+          <p class="news-card-excerpt">Leaders from government, private sector and civil society gathered to align on Nigeria's multi-sectoral development priorities.</p>
+          <a href="#" class="news-card-link">Read story
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+      </article>
+      <article class="news-card">
+        <div class="news-card-image">
+          <img src="https://picsum.photos/seed/wendi-news-partnership/800/500.jpg" alt="WeNDI government partnership signing" loading="lazy">
+        </div>
+        <div class="news-card-content">
+          <div class="news-card-meta">
+            <span class="news-card-category">Partnership</span>
+            <span class="news-card-date">Feb 2024</span>
+          </div>
+          <h4 class="news-card-title">New Government Partnership to Scale Youth Enterprise</h4>
+          <p class="news-card-excerpt">A multi-state partnership aimed at expanding finance, mentorship and market access for young Nigerian entrepreneurs.</p>
+          <a href="#" class="news-card-link">Read story
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+      </article>
+      <article class="news-card">
+        <div class="news-card-image">
+          <img src="https://picsum.photos/seed/wendi-news-innovation/800/500.jpg" alt="WeNDI innovation initiative launch" loading="lazy">
+        </div>
+        <div class="news-card-content">
+          <div class="news-card-meta">
+            <span class="news-card-category">Innovation</span>
+            <span class="news-card-date">Jan 2024</span>
+          </div>
+          <h4 class="news-card-title">Innovation Initiative Launches in Lagos Creative Hub</h4>
+          <p class="news-card-excerpt">A new programme supporting Nigeria's creative industries with infrastructure, training and international market access.</p>
+          <a href="#" class="news-card-link">Read story
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- Get Involved -->
+<section id="get-involved" class="section-involved">
+  <div class="involved-header">
+    <div class="section-eyebrow">Get Involved</div>
+    <h2 class="section-title font-display reveal">Many ways to <em>build Nigeria</em> with us.</h2>
+    <p class="section-description reveal">Whether you represent an organisation or you're an individual ready to act, there's a role for you in the WeNDI movement.</p>
+  </div>
+  <div class="involved-grid">
+    <a href="#partner" class="involved-card reveal">
+      <div class="involved-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <div class="involved-card-title">Sponsorship</div>
+      <p class="involved-card-description">Fund high-impact national programmes and align your brand with Nigeria's growth story.</p>
+      <span class="involved-card-cta">Become a sponsor →</span>
+    </a>
+    <a href="#partner" class="involved-card reveal">
+      <div class="involved-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      <div class="involved-card-title">Partnership</div>
+      <p class="involved-card-description">Co-create programmes with WeNDI across sectors, regions and target communities.</p>
+      <span class="involved-card-cta">Partner with us →</span>
+    </a>
+    <a href="#partner" class="involved-card reveal">
+      <div class="involved-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 12 13"/></svg></div>
+      <div class="involved-card-title">Support</div>
+      <p class="involved-card-description">Contribute resources, expertise or infrastructure to active WeNDI programmes.</p>
+      <span class="involved-card-cta">Offer support →</span>
+    </a>
+    <a href="#partner" class="involved-card reveal">
+      <div class="involved-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <div class="involved-card-title">Services</div>
+      <p class="involved-card-description">Provide professional services — research, design, legal, technology — to WeNDI initiatives.</p>
+      <span class="involved-card-cta">Offer services →</span>
+    </a>
+    <a href="#contact-group" class="involved-card reveal">
+      <div class="involved-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+      <div class="involved-card-title">Membership</div>
+      <p class="involved-card-description">Join the National Contact Group for Growth and help shape national development.</p>
+      <span class="involved-card-cta">Become a member →</span>
+    </a>
+    <a href="#contact-group" class="involved-card reveal">
+      <div class="involved-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><path d="M2 8v8a2 2 0 0 0 2 2h12V6H4a2 2 0 0 0-2 2Z"/></svg></div>
+      <div class="involved-card-title">Volunteer</div>
+      <p class="involved-card-description">Lend your time, skills and energy to community programmes across Nigeria.</p>
+      <span class="involved-card-cta">Volunteer →</span>
+    </a>
+    <a href="#contact-group" class="involved-card reveal">
+      <div class="involved-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+      <div class="involved-card-title">Internship</div>
+      <p class="involved-card-description">Gain hands-on experience in national development work as a WeNDI intern.</p>
+      <span class="involved-card-cta">Apply for internship →</span>
+    </a>
+    <a href="#partner" class="involved-card cta reveal">
+      <div class="involved-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+      <div>
+        <div class="involved-card-title">Ready to act?</div>
+        <p class="involved-card-description">Tell us how you'd like to contribute and our team will reach out within 48 hours.</p>
+      </div>
+      <span class="involved-card-cta">Start a conversation →</span>
+    </a>
+  </div>
+</section>
+
+<!-- National Contact Group -->
+<section id="contact-group" class="section-contact-group">
+  <div class="contact-group-content">
+    <div class="section-eyebrow">National Contact Group for Growth</div>
+    <h2 class="section-title font-display reveal" style="color:var(--cream);">Become a Force for <em>National Development.</em></h2>
+    <p class="section-description reveal">
+      Professionals, young people, organisations and citizens can contribute their skills, experience and passion across sectors. The National Contact Group for Growth is how Nigerians at home and across the diaspora step formally into the work of nation-building.
+    </p>
+
+    <div class="contact-group-grid">
+      <div>
+        <div class="contact-group-features">
+          <div class="contact-group-feature">Sector-specific working groups</div>
+          <div class="contact-group-feature">Monthly engagement &amp; field missions</div>
+          <div class="contact-group-feature">Open to diaspora Nigericans</div>
+          <div class="contact-group-feature">Verified network &amp; credentials</div>
+          <div class="contact-group-feature">Pathway to leadership roles</div>
+        </div>
+      </div>
+      <div class="contact-group-buttons">
+        <a href="#" class="contact-group-button" id="becomeMember">
+          <div>
+            <div class="contact-group-button-title">Become a Member</div>
+            <div class="contact-group-button-sub">Join the national network building Nigeria's future.</div>
+          </div>
+          <div class="contact-group-button-arrow">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+        </a>
+        <a href="#" class="contact-group-button" id="volunteerBtn">
+          <div>
+            <div class="contact-group-button-title">Volunteer</div>
+            <div class="contact-group-button-sub">Contribute your time and skills to active programmes.</div>
+          </div>
+          <div class="contact-group-button-arrow">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+        </a>
+        <a href="#" class="contact-group-button" id="internshipBtn">
+          <div>
+            <div class="contact-group-button-title">Apply for an Internship</div>
+            <div class="contact-group-button-sub">Hands-on national development experience for young Nigerians.</div>
+          </div>
+          <div class="contact-group-button-arrow">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Closing CTA -->
+<section id="partner" class="section-closing">
+  <div class="closing-content">
+    <div class="section-eyebrow center" style="justify-content:center; display:inline-flex;">Partner With WeNDI</div>
+    <h2 class="closing-title reveal">Together, We Can Build a More <em>Inclusive</em>, <em>Productive</em> and <em>Globally Competitive</em> Nigeria.</h2>
+    <p class="section-description reveal" style="margin:0 auto; color:rgba(245,241,234,0.75);">
+      Join government partners, private sector leaders, development institutions and citizens already working with WeNDI to deliver real national impact.
+    </p>
+    <div class="closing-buttons">
+      <a href="#" class="btn-gold magnetic" id="partnerBtn">Partner With WeNDI
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a href="#" class="btn-ghost magnetic" id="contactBtn">Contact the Team</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-top">
+      <div>
+        <a href="#home" class="logo" style="color:var(--cream);">
+          <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="60" cy="60" r="56" fill="none" stroke="#c9a961" stroke-width="0.5" opacity="0.4"/>
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#c9a961" stroke-width="1.5"/>
+            <path d="M 40 80 L 40 40 L 78 80 L 78 40" stroke="#faf7f2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <circle cx="60" cy="28" r="3" fill="#c9a961"/>
+          </svg>
+          <span class="logo-text">WeNDI</span>
+        </a>
+        <p class="footer-brand-description">
+          The Welcome to Nigeria Development Initiative — a people-centred, pro-country platform unlocking Nigeria's potential through culture, commerce, innovation and sustainable development.
+        </p>
+        <form class="footer-newsletter" id="newsletterForm">
+          <input type="email" placeholder="Your email address" aria-label="Email address" required>
+          <button type="submit">Subscribe</button>
+        </form>
+        <div class="footer-social">
+          <a href="#" aria-label="Twitter"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zM8 19h-3v-11h3v11zM6.5 6.7c-.97 0-1.75-.79-1.75-1.75s.78-1.75 1.75-1.75 1.75.79 1.75 1.75-.78 1.75-1.75 1.75zM20 19h-3v-5.6c0-3.37-4-3.12-4 0v5.6h-3v-11h3v1.76c1.4-2.58 7-2.77 7 2.47v6.77z"/></svg></a>
+          <a href="#" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.52 9-4.83 9-9.95z"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Organisation</h4>
+        <ul>
+          <li><a href="whoweare.html">Who We Are</a></li>
+          <li><a href="goals.html">Our Goals</a></li>
+          <li><a href="sip.html">SIP</a></li>
+          <li><a href="ncgg.html">Contact</a></li>
+          <li><a href="#global">Global Outlook</a></li>
+          <li><a href="#impact">News &amp; Media</a></li>
+          <li><a href="#get-involved">Get Involved</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Programmes</h4>
+        <ul>
+          <li><a href="#programmes">Tourism &amp; Culture</a></li>
+          <li><a href="#programmes">Creative Industries</a></li>
+          <li><a href="#programmes">Education &amp; Youth</a></li>
+          <li><a href="#programmes">Technology &amp; Innovation</a></li>
+          <li><a href="#programmes">Agriculture &amp; Enterprise</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <div class="footer-contact">
+          <div class="footer-contact-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <a href="mailto:info@welcometonigeria.org">info@welcometonigeria.org</a>
+          </div>
+          <div class="footer-contact-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <a href="tel:+23492914658">+234 929 14658</a>
+          </div>
+          <div class="footer-contact-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>Plot 1234, Samuel Ladoke Akintola Boulevard, Garki 2, Abuja, FCT</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© <span id="year"></span> Welcome to Nigeria Development Initiative. All rights reserved.</div>
+      <div class="footer-bottom-links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Accessibility</a>
+        <a href="#">Sitemap</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toastText">Thank you — our team will reach out shortly.</span>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isCoarse = window.matchMedia('(pointer: coarse)').matches;
+
+  // Year
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // ===== Loader =====
+  const loader = document.getElementById('loader');
+  const loaderBar = document.getElementById('loaderBar');
+  const loaderText = document.getElementById('loaderText');
+  const curtainTop = document.getElementById('curtainTop');
+  const curtainBottom = document.getElementById('curtainBottom');
+  let progress = 0;
+
+  function runLoader(){
+    const start = performance.now();
+    const duration = 3000;
+    function tick(now){
+      const elapsed = now - start;
+      progress = Math.min(100, Math.round((elapsed / duration) * 100));
+      loaderBar.style.setProperty('--progress', progress + '%');
+      loaderText.textContent = progress + '%';
+      if (elapsed < duration){
+        requestAnimationFrame(tick);
+      } else {
+        revealSite();
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function revealSite(){
+    if (window.gsap && !prefersReducedMotion){
+      gsap.to([curtainTop, curtainBottom], {
+        scaleY: 0,
+        duration: 0.9,
+        ease: 'power4.inOut',
+        transformOrigin: prefersReducedMotion ? 'center' : (i)=> i===0 ? 'top center' : 'bottom center',
+        onStart: ()=>{ document.body.style.overflow='auto'; },
+        onComplete: ()=>{
+          loader.style.display='none';
+          startHeroAnimation();
+        }
+      });
+      gsap.to('.loader-content', { opacity:0, duration:0.4, ease:'power2.in' });
+    } else {
+      loader.style.display='none';
+      document.body.style.overflow='auto';
+      startHeroAnimation();
+    }
+  }
+
+  // Prevent scroll during load
+  document.body.style.overflow='hidden';
+
+  // ===== Header scroll =====
+  const header = document.getElementById('header');
+  function onScroll(){
+    if (window.scrollY > 30) header.classList.add('scrolled');
+    else header.classList.remove('scrolled');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // ===== Mobile menu =====
+  const menuToggle = document.getElementById('menuToggle');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const menuClose = document.getElementById('menuClose');
+
+  function openMenu(){
+    mobileMenu.classList.add('open');
+    menuToggle.setAttribute('aria-expanded','true');
+    document.body.style.overflow='hidden';
+    // Stagger nav links
+    if (window.gsap && !prefersReducedMotion){
+      gsap.to('.mobile-nav a', { opacity:1, y:0, stagger:0.06, delay:0.2, duration:0.5, ease:'power3.out' });
+    }
+  }
+  function closeMenu(){
+    mobileMenu.classList.remove('open');
+    menuToggle.setAttribute('aria-expanded','false');
+    document.body.style.overflow='auto';
+  }
+  menuToggle.addEventListener('click', openMenu);
+  menuClose.addEventListener('click', closeMenu);
+  document.querySelectorAll('[data-close]').forEach(a => a.addEventListener('click', closeMenu));
+  document.getElementById('mobilePartner').addEventListener('click', closeMenu);
+
+  // ===== GSAP animations =====
+  if (window.gsap && window.ScrollTrigger){
+    gsap.registerPlugin(ScrollTrigger);
+  }
+
+  function startHeroAnimation(){
+    if (prefersReducedMotion){
+      gsap.set('.hero-title .word', { opacity:1, y:0 });
+      gsap.set('.hero-eyebrow, .hero-subtitle, .hero-cta', { opacity:1, y:0 });
+      return;
+    }
+    const tl = gsap.timeline({ defaults:{ ease:'power3.out' } });
+    tl.from('.hero-eyebrow', { opacity:0, y:20, duration:0.8 })
+      .from('.hero-title .word', { opacity:0, y:40, duration:1, stagger:0.08 }, '-=0.4')
+      .from('.hero-subtitle', { opacity:0, y:20, duration:0.8 }, '-=0.5')
+      .from('.hero-cta a', { opacity:0, y:20, duration:0.6, stagger:0.1 }, '-=0.4')
+      .from('.hero-scroll', { opacity:0, y:10, duration:0.6 }, '-=0.3');
+
+    // Hero parallax
+    if (window.ScrollTrigger){
+      gsap.to('.hero-bg img', {
+        yPercent: 18,
+        ease:'none',
+        scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:true }
+      });
+      gsap.to('.hero-content', {
+        yPercent: -8,
+        opacity: 0.4,
+        ease:'none',
+        scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:true }
+      });
+    }
+  }
+
+  // ===== Reveal on scroll =====
+  function setupReveals(){
+    if (!window.ScrollTrigger || prefersReducedMotion){
+      document.querySelectorAll('.reveal').forEach(el => { el.style.opacity=1; el.style.transform='none'; });
+      return;
+    }
+    gsap.utils.toArray('.reveal').forEach(el => {
+      gsap.fromTo(el,
+        { opacity:0, y:40 },
+        {
+          opacity:1, y:0, duration:1, ease:'power3.out',
+          scrollTrigger:{ trigger:el, start:'top 85%', once:true }
+        }
+      );
+    });
+
+    // Pillar cards stagger
+    gsap.fromTo('.pillar-card',
+      { opacity:0, y:50 },
+      { opacity:1, y:0, duration:0.9, stagger:0.12, ease:'power3.out',
+        scrollTrigger:{ trigger:'.intro-grid', start:'top 80%', once:true }
+      }
+    );
+
+    // Sector cards
+    gsap.fromTo('.sector-card',
+      { opacity:0, y:60 },
+      { opacity:1, y:0, duration:0.9, stagger:0.08, ease:'power3.out',
+        scrollTrigger:{ trigger:'.sectors-grid', start:'top 80%', once:true }
+      }
+    );
+
+    // Approach grid steps
+    gsap.fromTo('.approach-step',
+      { opacity:0, y:30 },
+      { opacity:1, y:0, duration:0.7, stagger:0.08, ease:'power3.out',
+        scrollTrigger:{ trigger:'.approach-grid', start:'top 80%', once:true }
+      }
+    );
+
+    // Involved cards
+    gsap.fromTo('.involved-card',
+      { opacity:0, y:40 },
+      { opacity:1, y:0, duration:0.7, stagger:0.06, ease:'power3.out',
+        scrollTrigger:{ trigger:'.involved-grid', start:'top 80%', once:true }
+      }
+    );
+
+    // Contact group buttons
+    gsap.fromTo('.contact-group-button',
+      { opacity:0, x:40 },
+      { opacity:1, x:0, duration:0.7, stagger:0.1, ease:'power3.out',
+        scrollTrigger:{ trigger:'.contact-group-buttons', start:'top 85%', once:true }
+      }
+    );
+
+    // News cards
+    gsap.fromTo('.news-card',
+      { opacity:0, y:40 },
+      { opacity:1, y:0, duration:0.8, stagger:0.12, ease:'power3.out',
+        scrollTrigger:{ trigger:'.news-grid', start:'top 80%', once:true }
+      }
+    );
+
+    // Connection lines draw
+    gsap.utils.toArray('.connection-line').forEach((line, i) => {
+      gsap.to(line, {
+        strokeDashoffset: 0,
+        duration: 1.2,
+        delay: i * 0.1,
+        ease:'power2.inOut',
+        scrollTrigger:{ trigger:'.global-visual', start:'top 75%', once:true }
+      });
+    });
+
+    // Global nodes pop
+    gsap.fromTo('.node-dot',
+      { opacity:0, scale:0 },
+      { opacity:1, scale:1, duration:0.5, stagger:0.08, ease:'back.out(1.7)',
+        scrollTrigger:{ trigger:'.global-visual', start:'top 75%', once:true }
+      }
+    );
+
+    // Impact counters — placeholder, animates to 0 (data-target is 0). When CMS data arrives,
+    // replace data-target value and the counter will animate to that number.
+    gsap.utils.toArray('.counter').forEach(el => {
+      const target = parseInt(el.getAttribute('data-target') || '0', 10);
+      const obj = { val: 0 };
+      gsap.to(obj, {
+        val: target,
+        duration: 2,
+        ease:'power2.out',
+        scrollTrigger:{ trigger: el, start:'top 85%', once:true },
+        onUpdate: ()=>{
+          if (target === 0){
+            el.textContent = '—';
+          } else {
+            el.textContent = Math.floor(obj.val).toLocaleString();
+          }
+        }
+      });
+    });
+  }
+
+  // ===== Magnetic buttons =====
+  function setupMagnetic(){
+    if (isCoarse || prefersReducedMotion) return;
+    document.querySelectorAll('.magnetic').forEach(btn => {
+      const strength = 0.3;
+      btn.addEventListener('mousemove', e => {
+        const rect = btn.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width/2;
+        const y = e.clientY - rect.top - rect.height/2;
+        btn.style.transform = `translate(${x * strength}px, ${y * strength}px)`;
+      });
+      btn.addEventListener('mouseleave', () => {
+        btn.style.transform = '';
+      });
+    });
+  }
+
+  // ===== Toast =====
+  const toast = document.getElementById('toast');
+  const toastText = document.getElementById('toastText');
+  let toastTimer;
+  function showToast(msg){
+    toastText.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=> toast.classList.remove('show'), 3800);
+  }
+
+  // Wire CTAs
+  document.getElementById('newsletterForm').addEventListener('submit', e => {
+    e.preventDefault();
+    showToast('Subscribed — WeNDI updates will arrive in your inbox.');
+    e.target.reset();
+  });
+
+  function bindCTA(id, msg){
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', e => { e.preventDefault(); showToast(msg); });
+  }
+  bindCTA('partnerBtn', 'Thank you — our partnerships team will contact you within 48 hours.');
+  bindCTA('contactBtn', 'Reach us at info@welcometonigeria.org or +234 929 14658.');
+  bindCTA('becomeMember', 'Membership application opened — check your email to continue.');
+  bindCTA('volunteerBtn', 'Volunteer form opened — tell us how you would like to contribute.');
+  bindCTA('internshipBtn', 'Internship application opened — we review submissions monthly.');
+
+  // Generic involved cards
+  document.querySelectorAll('.involved-card').forEach(card => {
+    if (!card.id){
+      card.addEventListener('click', e => {
+        // Allow anchor navigation but show toast as well
+        showToast('Thank you for your interest — our team will reach out shortly.');
+      });
+    }
+  });
+
+  // ===== Smooth scroll for anchor links =====
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const href = a.getAttribute('href');
+      if (href.length > 1){
+        const target = document.querySelector(href);
+        if (target){
+          e.preventDefault();
+          target.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block:'start' });
+        }
+      }
+    });
+  });
+
+  // ===== Run =====
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', () => {
+      setupMagnetic();
+      setupReveals();
+      runLoader();
+    });
+  } else {
+    setupMagnetic();
+    setupReveals();
+    runLoader();
+  }
+})();
+</script>
+
+</body>
+</html>
